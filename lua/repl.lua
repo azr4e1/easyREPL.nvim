@@ -50,7 +50,6 @@ local Terminal = {}
 ---@param width number
 ---@param horizontal boolean
 ---@param floating boolean
----@param hidden boolean
 ---@return Terminal
 function Terminal:new(repl, height, width, horizontal, floating)
 	local obj = {
@@ -104,20 +103,21 @@ function Terminal:restart()
 end
 
 ---Send text object
----@param lines Fmt
-function Terminal:send(lines)
+---@param text string
+function Terminal:send(text)
+	local formatted = fmt.Fmt:new(text)
 	if self.termid <= 0 then
 		error("repl is not active!")
 	end
 
 	if self.repl.strip then
-		lines = lines:strip()
+		formatted = formatted:strip()
 	end
 	if self.repl.nonewline then
-		lines = lines:nonewline()
+		formatted = formatted:nonewline()
 	end
 
-	local ok = pcall(vim.api.nvim_chan_send, self.termid, lines:string())
+	local ok = pcall(vim.api.nvim_chan_send, self.termid, formatted:string())
 	if not ok then
 		error("repl cannot accept input")
 	end
