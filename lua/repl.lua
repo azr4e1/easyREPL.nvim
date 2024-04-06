@@ -1,4 +1,10 @@
+local fmt = require("fmt")
+local u = require("utils")
+
 local M = {}
+
+local C_L = ""
+local C_C = ""
 
 ---@class Repl
 ---@field cmd string
@@ -30,13 +36,12 @@ end
 
 ---@class Terminal
 ---@field repl Repl
----@field id number
+---@field bufid number
 ---@field termid number
 ---@field height number
 ---@field width number
 ---@field horizontal boolean
 ---@field floating boolean
----@field hidden boolean
 local Terminal = {}
 
 ---Class constructor
@@ -47,14 +52,13 @@ local Terminal = {}
 ---@param floating boolean
 ---@param hidden boolean
 ---@return Terminal
-function Terminal:new(repl, height, width, horizontal, floating, hidden)
+function Terminal:new(repl, height, width, horizontal, floating)
 	local obj = {
 		repl = repl,
 		height = height,
 		width = width,
 		horizontal = horizontal,
 		floating = floating,
-		hidden = hidden,
 	}
 	self.__index = self
 
@@ -62,15 +66,15 @@ function Terminal:new(repl, height, width, horizontal, floating, hidden)
 end
 
 ---Initialize and open terminal buffer
-function Terminal:__spawn()
+function Terminal:spawn()
 	-- create empty buffer
-	self.id = vim.api.nvim_create_buf(false, false)
-	if self.id <= 0 then
+	self.bufid = vim.api.nvim_create_buf(false, false)
+	if self.bufid <= 0 then
 		error("couldn't create new buffer")
 	end
 
 	-- set terminal into buffer
-	self.termid = vim.api.nvim_buf_call(self.id, function()
+	self.termid = vim.api.nvim_buf_call(self.bufid, function()
 		local chanid = vim.fn.termopen(self.repl.cmd, {
 			cwd = self.repl.cwd,
 			height = self.height,
@@ -84,14 +88,19 @@ function Terminal:__spawn()
 end
 
 function Terminal:kill()
-	_ = pcall(vim.api.nvim_buf_delete, self.id, { force = true })
-	self.id = -1
+	_ = pcall(vim.fn.jobstop, self.termid)
+	_ = pcall(vim.api.nvim_buf_delete, self.bufid, { force = true })
+	self.bufid = -1
 	self.termid = -1
 end
 
 function Terminal:restart()
+	local winid = vim.fn.bufwinid(self.bufid)
 	self:kill()
-	self:__spawn()
+	self:spawn()
+	if winid > 0 then
+		self:show()
+	end
 end
 
 ---Send text object
