@@ -71,7 +71,6 @@ function Terminal:spawn()
 	if self.bufid <= 0 then
 		error("couldn't create new buffer")
 	end
-
 	-- set terminal into buffer
 	self.termid = vim.api.nvim_buf_call(self.bufid, function()
 		local chanid = vim.fn.termopen(self.repl.cmd, {
