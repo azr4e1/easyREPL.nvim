@@ -131,9 +131,55 @@ function Terminal:interrupt()
 	self:send(C_C)
 end
 
-function Terminal:show() end
+function Terminal:show()
+	if self.bufid <= 0 then
+		error("terminal not instantiated")
+	end
+	-- if terminal is already displayed, ignore
+	if vim.fn.bufwinid(self.bufid) >= 0 then
+		return
+	end
+	-- horizontal has precedence over float
+	if self.horizontal and self.floating then
+		self.floating = false
+	end
 
-function Terminal:toggle() end
+	if self.horizontal then
+		local prev_winid = vim.api.nvim_get_current_win()
+		vim.cmd(self.height .. "split")
+		local winid = vim.api.nvim_get_current_win()
+		local ok = pcall(vim.api.nvim_win_set_buf, winid, self.bufid)
+		if not ok then
+			error("there was an error loading terminal buffer in new horizontal split")
+		end
+		vim.api.nvim_set_current_win(prev_winid)
+	elseif self.floating then
+		local row, col = u.get_centre_pos_float(self.height, self.width)
+		local winid = vim.api.nvim_open_win(self.bufid, false, {
+			relative = "editor",
+			width = self.width,
+			height = self.height,
+			row = row,
+			col = col,
+			title = self.repl.name,
+			border = "solid",
+			style = "minimal",
+		})
+		if winid <= 0 then
+			error("there was a problem creating a floating window")
+		end
+	else
+		-- vertical case
+		local prev_winid = vim.api.nvim_get_current_win()
+		vim.cmd(self.width .. "vsplit")
+		local winid = vim.api.nvim_get_current_win()
+		local ok = pcall(vim.api.nvim_win_set_buf, winid, self.bufid)
+		if not ok then
+			error("there was an error loading terminal buffer in new vertical split")
+		end
+		vim.api.nvim_set_current_win(prev_winid)
+	end
+end
 
 function Terminal:float() end
 
