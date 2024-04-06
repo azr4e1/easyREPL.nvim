@@ -123,9 +123,13 @@ function Terminal:send(text)
 	end
 end
 
-function Terminal:clear() end
+function Terminal:clear()
+	self:send(C_L)
+end
 
-function Terminal:hide() end
+function Terminal:interrupt()
+	self:send(C_C)
+end
 
 function Terminal:show() end
 
