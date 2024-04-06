@@ -181,6 +181,14 @@ function Terminal:show()
 	end
 end
 
+function Terminal:hide()
+	local winid = vim.fn.bufwinid(self.bufid)
+	if winid < 0 then
+		return
+	end
+	vim.api.nvim_win_close(winid, true)
+end
+
 function Terminal:float() end
 
 function Terminal:anchor() end
