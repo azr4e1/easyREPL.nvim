@@ -143,16 +143,7 @@ function Terminal:show()
 		self.floating = false
 	end
 
-	if self.horizontal then
-		local prev_winid = vim.api.nvim_get_current_win()
-		vim.cmd(self.height .. "split")
-		local winid = vim.api.nvim_get_current_win()
-		local ok = pcall(vim.api.nvim_win_set_buf, winid, self.bufid)
-		if not ok then
-			error("there was an error loading terminal buffer in new horizontal split")
-		end
-		vim.api.nvim_set_current_win(prev_winid)
-	elseif self.floating then
+	if self.floating then
 		local row, col = u.get_centre_pos_float(self.height, self.width)
 		local winid = vim.api.nvim_open_win(self.bufid, true, {
 			relative = "editor",
@@ -168,13 +159,13 @@ function Terminal:show()
 			error("there was a problem creating a floating window")
 		end
 	else
-		-- vertical case
+		local cmd = self.horizontal and self.height .. "split" or self.width .. "vsplit"
 		local prev_winid = vim.api.nvim_get_current_win()
-		vim.cmd(self.width .. "vsplit")
+		vim.cmd(cmd)
 		local winid = vim.api.nvim_get_current_win()
 		local ok = pcall(vim.api.nvim_win_set_buf, winid, self.bufid)
 		if not ok then
-			error("there was an error loading terminal buffer in new vertical split")
+			error("there was an error loading terminal buffer in new split")
 		end
 		vim.api.nvim_set_current_win(prev_winid)
 	end
