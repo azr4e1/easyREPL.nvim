@@ -154,7 +154,7 @@ function Terminal:show()
 		vim.api.nvim_set_current_win(prev_winid)
 	elseif self.floating then
 		local row, col = u.get_centre_pos_float(self.height, self.width)
-		local winid = vim.api.nvim_open_win(self.bufid, false, {
+		local winid = vim.api.nvim_open_win(self.bufid, true, {
 			relative = "editor",
 			width = self.width,
 			height = self.height,
@@ -197,9 +197,26 @@ function Terminal:toggle()
 	self:hide()
 end
 
-function Terminal:float() end
+function Terminal:to_float()
+	self.floating = true
+	self.horizontal = false
+	self:hide()
+	self:show()
+end
 
-function Terminal:anchor() end
+function Terminal:to_horizontal()
+	self.floating = false
+	self.horizontal = true
+	self:hide()
+	self:show()
+end
+
+function Terminal:to_vertical()
+	self.floating = false
+	self.horizontal = false
+	self:hide()
+	self:show()
+end
 
 function Terminal:resize(height, width) end
 
