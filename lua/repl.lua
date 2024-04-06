@@ -101,11 +101,11 @@ function Terminal:send(lines)
 		error("repl is not active!")
 	end
 
-	if self.repl.nonewline then
-		lines = lines:nonewline()
-	end
 	if self.repl.strip then
 		lines = lines:strip()
+	end
+	if self.repl.nonewline then
+		lines = lines:nonewline()
 	end
 
 	local ok = pcall(vim.api.nvim_chan_send, self.termid, lines:string())
