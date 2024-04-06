@@ -209,7 +209,18 @@ function Terminal:to_vertical()
 	self:show()
 end
 
-function Terminal:resize(height, width) end
+---Resize terminal window
+---@param height number
+---@param width number
+function Terminal:resize(height, width)
+	if height <= 0 or width <= 0 then
+		error("cannot provide negative height/width")
+	end
+	self.height = math.floor(height)
+	self.width = math.floor(width)
+	self:hide()
+	self:show()
+end
 
 M.Terminal = Terminal
 M.Repl = Repl
