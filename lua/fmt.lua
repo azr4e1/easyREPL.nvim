@@ -42,7 +42,7 @@ end
 ---Return stringified content
 ---@return string
 function Fmt:string()
-	return table.concat(self.lines, "\n")
+	return table.concat(self.lines, "\n") .. "\n\n"
 end
 
 M.Fmt = Fmt
