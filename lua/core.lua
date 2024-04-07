@@ -49,4 +49,6 @@ end
 ---@param config table
 function M.setup(config) end
 
+M.Manager = Manager
+
 return M
