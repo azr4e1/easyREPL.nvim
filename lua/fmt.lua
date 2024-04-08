@@ -40,9 +40,17 @@ function Fmt:nonewline()
 end
 
 ---Return stringified content
+---@param nr_cr number|nil
 ---@return string
-function Fmt:string()
-	return table.concat(self.lines, "\n") .. "\n\n"
+function Fmt:string(nr_cr)
+	local lines = table.concat(self.lines, "\n")
+	if nr_cr == nil then
+		nr_cr = 0
+	end
+	for _ = 1, nr_cr do
+		lines = lines .. "\n"
+	end
+	return lines
 end
 
 M.Fmt = Fmt
