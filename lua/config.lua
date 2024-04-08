@@ -4,6 +4,12 @@ local DefaultConfig = {}
 function DefaultConfig:new() end
 
 ---@class ReplConfig
+---@field cmd
+---@field name
+---@field cwd
+---@field strip
+---@field nonewline
 local ReplConfig = {}
 
-function ReplConfig:new() end
+---@class Config
+local Config = {}

@@ -10,9 +10,9 @@ function Manager:new()
 	return setmetatable({ terminals = {} }, self)
 end
 
----Append a terminal object
+---Add terminal object
 ---@param term Terminal
-function Manager:append(term)
+function Manager:add(term)
 	table.insert(self.terminals, term)
 end
 
