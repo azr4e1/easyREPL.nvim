@@ -1,3 +1,4 @@
+--  TODO: every action must check that the terminal job is still active
 local fmt = require("fmt")
 local u = require("utils")
 
@@ -10,6 +11,7 @@ local C_C = ""
 ---@field cmd string
 ---@field name string
 ---@field cwd string
+---@field nr_cr number
 ---@field strip boolean
 ---@field nonewline boolean
 local Repl = {}
@@ -21,11 +23,12 @@ local Repl = {}
 ---@param strip boolean
 ---@param nonewline boolean
 ---@return Repl
-function Repl:new(cmd, name, cwd, strip, nonewline)
+function Repl:new(cmd, name, cwd, nr_cr, strip, nonewline)
 	local obj = {
 		cmd = cmd,
 		name = name,
 		cwd = cwd,
+		nr_cr = nr_cr,
 		strip = strip,
 		nonewline = nonewline,
 	}
@@ -116,7 +119,7 @@ function Terminal:send(text)
 		formatted = formatted:nonewline()
 	end
 
-	local ok = pcall(vim.api.nvim_chan_send, self.termid, formatted:string())
+	local ok = pcall(vim.api.nvim_chan_send, self.termid, formatted:string(self.repl.nr_cr))
 	if not ok then
 		error("repl cannot accept input")
 	end
