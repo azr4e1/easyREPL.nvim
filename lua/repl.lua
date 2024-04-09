@@ -24,14 +24,10 @@ function Repl:new(opts)
 	if opts.cmd == nil then
 		error("'cmd' value cannot be nil or empty. It must be a valid REPL command.")
 	end
-	local obj = { cmd = opts.cmd }
-	for key, default_val in pairs(defaults.repl_defaults) do
-		local val = opts[key]
-		if val == nil then
-			val = default_val
-		end
-		obj[key] = val
-	end
+
+	local obj = u.get_defaults(opts, defaults.repl_defaults)
+	obj.cmd = opts.cmd
+
 	self.__index = self
 
 	return setmetatable(obj, self)
@@ -54,14 +50,10 @@ function Terminal:new(opts)
 	if opts.repl == nil then
 		error("'repl' value cannot be nil or empty. It must be a valid REPL.")
 	end
-	local obj = { repl = opts.repl }
-	for key, default_val in pairs(defaults.term_defaults) do
-		local val = opts[key]
-		if val == nil then
-			val = default_val
-		end
-		obj[key] = val
-	end
+
+	local obj = u.get_defaults(opts, defaults.term_defaults)
+	obj.repl = opts.repl
+
 	self.__index = self
 
 	return setmetatable(obj, self)

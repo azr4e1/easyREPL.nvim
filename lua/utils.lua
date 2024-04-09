@@ -81,4 +81,22 @@ function M.get_current_buffer()
 	return table.concat(content, "\n")
 end
 
+-- TODO: Add data validation
+---Get defaults if key not available in input
+---@param input_vales table
+---@param default_values table
+---@return table
+function M.get_defaults(input_vales, default_values)
+	local obj = {}
+	for key, default_val in pairs(default_values) do
+		local val = input_vales[key]
+		if val == nil then
+			val = default_val
+		end
+		obj[key] = val
+	end
+
+	return obj
+end
+
 return M
