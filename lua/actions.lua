@@ -1,3 +1,6 @@
+local manager = vim.g.easyrepl_terminal_list
+local config = vim.g.easyrepl_configuration
+
 local M = {}
 
 function M.add_new_repl(name) end
