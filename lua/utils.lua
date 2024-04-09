@@ -57,7 +57,7 @@ end
 ---Get current line as text
 ---@return string
 function M.get_current_line()
-	return vim.api.nvim_ge_current_line()
+	return vim.api.nvim_get_current_line()
 end
 
 ---Get current visual selection as text. From https://neovim.discourse.group/t/function-that-return-visually-selected-text/1601
