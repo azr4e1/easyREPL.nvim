@@ -1,15 +1,9 @@
----@class DefaultConfig
-local DefaultConfig = {}
+local defaults = require("defaults")
+local repl = require("repl")
 
-function DefaultConfig:new() end
+local M = {}
 
----@class ReplConfig
----@field cmd
----@field name
----@field cwd
----@field strip
----@field nonewline
-local ReplConfig = {}
-
----@class Config
+---@class MainConfig
 local Config = {}
+
+return M
