@@ -1,5 +1,8 @@
+local function setup(opts) end
+
 local M = {
-	core = require("core"),
+	actions = require("actions"),
+	setup = setup,
 }
 
 return M
