@@ -1,6 +1,7 @@
 --  TODO: every action must check that the terminal job is still active
 local fmt = require("fmt")
 local u = require("utils")
+local defaults = require("defaults")
 
 local M = {}
 
@@ -17,21 +18,20 @@ local C_C = ""
 local Repl = {}
 
 ---Class constructor
----@param cmd string
----@param name string
----@param cwd string
----@param strip boolean
----@param nonewline boolean
+---@param opts table
 ---@return Repl
-function Repl:new(cmd, name, cwd, nr_cr, strip, nonewline)
-	local obj = {
-		cmd = cmd,
-		name = name,
-		cwd = cwd,
-		nr_cr = nr_cr,
-		strip = strip,
-		nonewline = nonewline,
-	}
+function Repl:new(opts)
+	if opts.cmd == nil then
+		error("'cmd' value cannot be nil or empty. It must be a valid REPL command.")
+	end
+	local obj = { cmd = opts.cmd }
+	for key, default_val in pairs(defaults.repl_defaults) do
+		local val = opts[key]
+		if val == nil then
+			val = default_val
+		end
+		obj[key] = val
+	end
 	self.__index = self
 
 	return setmetatable(obj, self)
@@ -48,20 +48,20 @@ end
 local Terminal = {}
 
 ---Class constructor
----@param repl Repl
----@param height number
----@param width number
----@param horizontal boolean
----@param floating boolean
+---@param opts table
 ---@return Terminal
-function Terminal:new(repl, height, width, horizontal, floating)
-	local obj = {
-		repl = repl,
-		height = height,
-		width = width,
-		horizontal = horizontal,
-		floating = floating,
-	}
+function Terminal:new(opts)
+	if opts.repl == nil then
+		error("'repl' value cannot be nil or empty. It must be a valid REPL.")
+	end
+	local obj = { repl = opts.repl }
+	for key, default_val in pairs(defaults.term_defaults) do
+		local val = opts[key]
+		if val == nil then
+			val = default_val
+		end
+		obj[key] = val
+	end
 	self.__index = self
 
 	return setmetatable(obj, self)
@@ -221,8 +221,6 @@ function Terminal:resize(height, width)
 	end
 	self.height = math.floor(height)
 	self.width = math.floor(width)
-	self:hide()
-	self:show()
 end
 
 M.Terminal = Terminal
