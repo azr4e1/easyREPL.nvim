@@ -8,7 +8,9 @@ local function setup(opts)
 	local repls = u.copy(defaults.default_repls)
 	if opts.repls ~= nil and type(opts.repls) == "table" then
 		for _, repl in ipairs(opts.repls) do
-			table.insert(repls, repl)
+			if vim.fn.executable(repl.cmd) == 1 then
+				table.insert(repls, repl)
+			end
 		end
 	end
 	opts.repls = repls
