@@ -24,6 +24,9 @@ function Repl:new(opts)
 	if opts.cmd == nil then
 		error("'cmd' value cannot be nil or empty. It must be a valid REPL command.")
 	end
+	if vim.fn.executable(opts.cmd) ~= 1 then
+		error(opts.cmd .. " does not exist.")
+	end
 
 	local obj = u.get_defaults(opts, defaults.repl_defaults)
 	obj.cmd = opts.cmd
@@ -61,6 +64,11 @@ end
 
 ---Initialize and open terminal buffer
 function Terminal:spawn()
+	-- if it already exists, do nothing
+	if self.bufid ~= nil and self.bufid > 0 then
+		return
+	end
+
 	-- create empty buffer
 	self.bufid = vim.api.nvim_create_buf(false, false)
 	if self.bufid <= 0 then
@@ -126,7 +134,7 @@ function Terminal:interrupt()
 end
 
 function Terminal:show()
-	if self.bufid <= 0 then
+	if self.bufid == nil or self.bufid <= 0 then
 		error("terminal not instantiated")
 	end
 	-- if terminal is already displayed, ignore
