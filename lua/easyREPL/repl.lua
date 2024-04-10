@@ -224,14 +224,23 @@ function Terminal:to_vertical()
 end
 
 ---Resize terminal window
----@param height number
----@param width number
-function Terminal:resize(height, width)
-	if height <= 0 or width <= 0 then
-		error("cannot provide negative height/width")
+---@param opts string|table<number>
+function Terminal:resize(opts)
+	if type(opts) == "string" then
+		self.height = -1
+		self.width = -1
+		self.screen_pct = opts
+		return
 	end
-	self.height = math.floor(height)
-	self.width = math.floor(width)
+	local height = opts.height
+	local width = opts.width
+
+	if height ~= nil and type(height) == "number" and height > 0 then
+		self.height = math.floor(height)
+	end
+	if width ~= nil and type(width) == "number" and width > 0 then
+		self.width = math.floor(width)
+	end
 end
 
 M.Terminal = Terminal

@@ -138,11 +138,11 @@ function M.fill_in_terminal_size(term)
 	local height = term.height
 	local width = term.width
 
-	if height == nil or type(height) ~= "number" then
+	if height == nil or type(height) ~= "number" or height <= 0 then
 		height = height_pct
 	end
 
-	if width == nil or type(width) ~= "number" then
+	if width == nil or type(width) ~= "number" or width <= 0 then
 		width = width_pct
 	end
 
