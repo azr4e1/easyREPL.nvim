@@ -77,7 +77,11 @@ function Terminal:spawn()
 		error("couldn't create new buffer")
 	end
 
-	local height, width = u.fill_in_terminal_size(self)
+	local ok, height, width = pcall(u.fill_in_terminal_size, self)
+	if not ok then
+		_ = pcall(vim.api.nvim_buf_delete, self.bufid, { force = true })
+		error(height)
+	end
 	-- set terminal into buffer
 	self.termid = vim.api.nvim_buf_call(self.bufid, function()
 		local chanid = vim.fn.termopen(self.repl.cmd, {
@@ -172,13 +176,30 @@ function Terminal:show()
 		if winid <= 0 then
 			error("there was a problem creating a floating window")
 		end
+		local ok, err = pcall(set_window_options, winid)
+		if not ok then
+			vim.api.nvim_win_close(winid, { force = true })
+			error(err)
+		end
 	else
 		local cmd = self.horizontal and height .. "split" or width .. "vsplit"
 		local prev_winid = vim.api.nvim_get_current_win()
 		vim.cmd(cmd)
 		local winid = vim.api.nvim_get_current_win()
+		local ok, err = pcall(set_window_options, winid)
+		if not ok then
+			vim.api.nvim_win_close(winid, { force = true })
+			error(err)
+		end
+		-- fix window size
+		if self.horizontal then
+			vim.api.nvim_win_set_option(winid, "winfixheight", true)
+		else
+			vim.api.nvim_win_set_option(winid, "winfixwidth", true)
+		end
 		local ok = pcall(vim.api.nvim_win_set_buf, winid, self.bufid)
 		if not ok then
+			_ = pcall(vim.api.nvim_win_close, winid, { force = true })
 			error("there was an error loading terminal buffer in new split")
 		end
 		vim.api.nvim_set_current_win(prev_winid)
