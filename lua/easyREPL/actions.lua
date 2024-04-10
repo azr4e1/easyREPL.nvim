@@ -433,6 +433,86 @@ function M.interrupt_all()
 	end)
 end
 
+function M.resize_pct(id, pct)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	if pct == nil then
+		pct = vim.fn.input({ prompt = "New pct size: ", cancelreturn = nil })
+		if pct == nil then
+			return
+		end
+	end
+	local ok, err = pcall(u.get_term_size_pct, pct)
+	if not ok then
+		vim.notify(tostring(err), vim.log.levels.ERROR)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:resize(pct)
+	end)
+end
+
+function M.resize_pct_select(pct)
+	select_active_repl(function(id)
+		M.resize_pct(id, pct)
+	end)
+end
+
+function M.resize_width(id, width)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	if width == nil then
+		width = vim.fn.input({ prompt = "New width: ", cancelreturn = nil })
+		if width == nil then
+			return
+		end
+		width = tonumber(width)
+		if width == nil then
+			vim.notify("Value must be a number", vim.log.levels.INFO)
+		end
+	end
+
+	EasyreplTerminalList:apply(id, function(term)
+		term:resize({ width = width })
+	end)
+end
+
+function M.resize_width_select(width)
+	select_active_repl(function(id)
+		M.resize_width(id, width)
+	end)
+end
+
+function M.resize_height(id, height)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	if height == nil then
+		height = vim.fn.input({ prompt = "New height: ", cancelreturn = nil })
+		if height == nil then
+			return
+		end
+		height = tonumber(height)
+		if height == nil then
+			vim.notify("Value must be a number", vim.log.levels.INFO)
+		end
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:resize({ height = height })
+	end)
+end
+
+function M.resize_height_select(height)
+	select_active_repl(function(id)
+		M.resize_height(id, height)
+	end)
+end
+
 function M.list_repls()
 	for i, term in ipairs(EasyreplTerminalList.terminals) do
 		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
