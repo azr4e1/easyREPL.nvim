@@ -82,6 +82,7 @@ function M.get_current_buffer()
 end
 
 -- TODO: Add data validation
+
 ---Get defaults if key not available in input
 ---@param input_vales table
 ---@param default_values table
@@ -98,5 +99,23 @@ function M.get_defaults(input_vales, default_values)
 
 	return obj
 end
+
+---Return a shallow copy of original table
+---@param input table
+---@return table|nil
+function M.copy(input)
+	if input == nil then
+		return nil
+	end
+
+	local copy = {}
+	for key, val in pairs(input) do
+		copy[key] = val
+	end
+
+	return copy
+end
+
+function M.select_repl() end
 
 return M
