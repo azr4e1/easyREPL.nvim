@@ -149,4 +149,13 @@ function M.fill_in_terminal_size(term)
 	return height, width
 end
 
+function M.get_term_id(term, manager)
+	for i, active_term in ipairs(manager.terminals) do
+		if active_term.termid == term.termid then
+			return i
+		end
+	end
+	return -1
+end
+
 return M

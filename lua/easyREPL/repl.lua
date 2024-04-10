@@ -1,5 +1,4 @@
 --  TODO: every action must check that the terminal job is still active
--- TODO: add screen percentage size for terminal, to display it dynamically
 local fmt = require("fmt")
 local u = require("utils")
 local defaults = require("defaults")
@@ -85,6 +84,9 @@ function Terminal:spawn()
 			cwd = self.repl.cwd,
 			height = height,
 			width = width,
+			on_exit = function()
+				EasyreplTerminalList:remove(u.get_term_id(self, EasyreplTerminalList))
+			end,
 		})
 		return chanid
 	end)
