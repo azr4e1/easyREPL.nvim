@@ -42,7 +42,7 @@ end
 ---Broadcast action to all terminals
 ---@param func function
 function Manager:broadcast(func)
-	for id, _ in self.terminals do
+	for id, _ in ipairs(self.terminals) do
 		self:apply(id, func)
 	end
 end

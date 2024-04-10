@@ -20,8 +20,8 @@ function Config:new(opts)
 	obj.default_term = u.get_defaults(opts, defaults.term_defaults)
 
 	local repls = {}
-	if type(opts["repl"]) == "table" then
-		for _, repl_conf in ipairs(opts["repl"]) do
+	if type(opts["repls"]) == "table" then
+		for _, repl_conf in ipairs(opts["repls"]) do
 			local current_repl = repl.Repl:new(repl_conf)
 			repls[current_repl.name] = current_repl
 		end
