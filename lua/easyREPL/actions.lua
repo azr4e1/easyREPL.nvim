@@ -159,7 +159,21 @@ function M.send_line_to_select_repl()
 	M.select_active_repl(M.send_line_to_repl)
 end
 
-function M.send_line_to_all() end
+function M.send_line_to_all()
+	EasyreplTerminalList:broadcast(function(term)
+		local line = u.get_current_line()
+		local ok = pcall(function()
+			term:send(line)
+		end)
+		if not ok then
+			vim.notify(
+				"There was an error sending text to REPL. Make sure the process is running.",
+				vim.log.levels.ERROR
+			)
+			return
+		end
+	end)
+end
 
 function M.send_selection_to_repl(id)
 	if EasyreplTerminalList.terminals[id] == nil then
@@ -185,7 +199,21 @@ function M.send_selection_to_select_repl()
 	M.select_active_repl(M.send_selection_to_repl)
 end
 
-function M.send_selection_to_all() end
+function M.send_selection_to_all()
+	EasyreplTerminalList:broadcast(function(term)
+		local line = u.get_current_selection()
+		local ok = pcall(function()
+			term:send(line)
+		end)
+		if not ok then
+			vim.notify(
+				"There was an error sending text to REPL. Make sure the process is running.",
+				vim.log.levels.ERROR
+			)
+			return
+		end
+	end)
+end
 
 function M.show_repl(id)
 	if EasyreplTerminalList.terminals[id] == nil then
