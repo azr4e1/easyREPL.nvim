@@ -46,6 +46,7 @@ end
 ---@field width number
 ---@field horizontal boolean
 ---@field floating boolean
+---@field screen_pct string|number
 local Terminal = {}
 
 ---Class constructor
@@ -76,12 +77,14 @@ function Terminal:spawn()
 	if self.bufid <= 0 then
 		error("couldn't create new buffer")
 	end
+
+	local height, width = u.fill_in_terminal_size(self)
 	-- set terminal into buffer
 	self.termid = vim.api.nvim_buf_call(self.bufid, function()
 		local chanid = vim.fn.termopen(self.repl.cmd, {
 			cwd = self.repl.cwd,
-			height = self.height,
-			width = self.width,
+			height = height,
+			width = width,
 		})
 		return chanid
 	end)
@@ -148,12 +151,13 @@ function Terminal:show()
 		self.floating = false
 	end
 
+	local height, width = u.fill_in_terminal_size(self)
 	if self.floating then
-		local row, col = u.get_centre_pos_float(self.height, self.width)
+		local row, col = u.get_centre_pos_float(height, width)
 		local winid = vim.api.nvim_open_win(self.bufid, true, {
 			relative = "editor",
-			width = self.width,
-			height = self.height,
+			width = width,
+			height = height,
 			row = row,
 			col = col,
 			title = self.repl.name,
@@ -164,7 +168,7 @@ function Terminal:show()
 			error("there was a problem creating a floating window")
 		end
 	else
-		local cmd = self.horizontal and self.height .. "split" or self.width .. "vsplit"
+		local cmd = self.horizontal and height .. "split" or width .. "vsplit"
 		local prev_winid = vim.api.nvim_get_current_win()
 		vim.cmd(cmd)
 		local winid = vim.api.nvim_get_current_win()

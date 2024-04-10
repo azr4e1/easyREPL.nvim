@@ -15,7 +15,7 @@ function M.select_config_repl(func)
 	local repls = {}
 	local i = 1
 	for name, repl in pairs(EasyreplConfiguration.repls) do
-		local selection = tostring(i) .. ". " .. name .. " - " .. repl.cmd
+		local selection = tostring(i) .. ". " .. name .. " - " .. repl.repl_config.cmd
 		table.insert(repls, selection)
 		i = i + 1
 	end
@@ -65,7 +65,7 @@ function M.add_new_repo_auto()
 	local auto_repl_name = nil
 	local filetype = vim.o.filetype
 	for name, repl in pairs(EasyreplConfiguration.repls) do
-		for _, ft in ipairs(repl.filetypes) do
+		for _, ft in ipairs(repl.repl_config.filetypes) do
 			if filetype == ft then
 				auto_repl_name = name
 				goto continue

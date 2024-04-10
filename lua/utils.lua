@@ -10,7 +10,7 @@ function M.get_term_size_pct(pct)
 	local height = ui.height
 	local width = ui.width
 
-	if _type == string then
+	if _type == "string" then
 		---@diagnostic disable-next-line: param-type-mismatch
 		if #pct < 1 or not vim.endswith(pct, "%") then
 			error("incorrectly formatted string. Must be in format '%d%%'")
@@ -123,10 +123,30 @@ function M.select(options, prompt, func)
 			coroutine.resume(co, idx)
 		end)
 		local input = coroutine.yield()
+		if input == nil then
+			return
+		end
 		func(input)
 	end)
 
 	coroutine.resume(catcher_thread)
+end
+
+function M.fill_in_terminal_size(term)
+	-- if height and width are provided, use them
+	local height_pct, width_pct = M.get_term_size_pct(term.screen_pct)
+	local height = term.height
+	local width = term.width
+
+	if height == nil or type(height) ~= "number" then
+		height = height_pct
+	end
+
+	if width == nil or type(width) ~= "number" then
+		width = width_pct
+	end
+
+	return height, width
 end
 
 return M

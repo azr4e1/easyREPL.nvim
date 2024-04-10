@@ -20,10 +20,8 @@ M.repl_types = {
 	filetypes = "table",
 }
 
-local height, width = u.get_term_size_pct(0.5)
 M.term_defaults = {
-	height = height,
-	width = width,
+	screen_pct = "50%",
 	horizontal = false,
 	floating = false,
 }

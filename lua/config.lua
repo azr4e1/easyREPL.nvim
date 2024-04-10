@@ -1,3 +1,4 @@
+-- TODO: allow for terminal configuration per REPL
 local defaults = require("defaults")
 local repl = require("repl")
 local u = require("utils")
@@ -23,7 +24,8 @@ function Config:new(opts)
 	if type(opts["repls"]) == "table" then
 		for _, repl_conf in ipairs(opts["repls"]) do
 			local current_repl = repl.Repl:new(repl_conf)
-			repls[current_repl.name] = current_repl
+			local current_term_conf = u.get_defaults(repl_conf, obj.default_term)
+			repls[current_repl.name] = { repl_config = current_repl, term_config = current_term_conf }
 		end
 	end
 
@@ -37,18 +39,25 @@ end
 ---@param name string
 ---@return Repl
 function Config:new_repl(name)
-	local params = u.copy(self.repls[name])
-
-	if params == nil then
+	local params
+	if self.repls[name] == nil then
 		params = u.copy(self.default_repl)
 		params.cmd = name
+	else
+		params = u.copy(self.repls[name].repl_config)
 	end
 
 	return repl.Repl:new(params)
 end
 
 function Config:new_term(name)
-	local params = u.copy(self.default_term)
+	local params
+	if self.repls[name] == nil then
+		params = u.copy(self.default_term)
+	else
+		---@diagnostic disable-next-line: undefined-field
+		params = u.copy(self.repls[name].term_config)
+	end
 	params.repl = self:new_repl(name)
 
 	return repl.Terminal:new(params)
