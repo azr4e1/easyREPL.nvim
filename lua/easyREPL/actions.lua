@@ -171,6 +171,12 @@ function M.rename_repl(id, new_name)
 		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
 		return
 	end
+	if new_name == nil then
+		new_name = vim.fn.input({ prompt = "New name: ", cancelreturn = nil })
+		if new_name == nil then
+			return
+		end
+	end
 	---@diagnostic disable-next-line: undefined-field
 	EasyreplTerminalList.terminals[id].repl.name = new_name
 end
