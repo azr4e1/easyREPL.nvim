@@ -24,8 +24,8 @@ function Manager:remove(id)
 	if term == nil then
 		error("terminal doesn't exist")
 	end
-	term:kill()
 	_ = table.remove(self.terminals, id)
+	term:kill()
 end
 
 ---Do action to a terminal

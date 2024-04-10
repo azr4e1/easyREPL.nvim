@@ -85,7 +85,10 @@ function Terminal:spawn()
 			height = height,
 			width = width,
 			on_exit = function()
-				EasyreplTerminalList:remove(u.get_term_id(self, EasyreplTerminalList))
+				local id = u.get_term_id(self, EasyreplTerminalList)
+				if id ~= -1 then
+					EasyreplTerminalList:remove(u.get_term_id(self, EasyreplTerminalList))
+				end
 			end,
 		})
 		return chanid
