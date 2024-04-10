@@ -20,6 +20,7 @@ end
 ---@field name string
 ---@field cwd string
 ---@field nr_cr number
+---@field notab boolean
 ---@field strip boolean
 ---@field nonewline boolean
 ---@field filetypes table<string>
@@ -138,6 +139,9 @@ function Terminal:send(text)
 	end
 	if self.repl.nonewline then
 		formatted = formatted:nonewline()
+	end
+	if self.repl.notab then
+		formatted = formatted:notab(2)
 	end
 
 	local ok = pcall(vim.api.nvim_chan_send, self.termid, formatted:string(self.repl.nr_cr))

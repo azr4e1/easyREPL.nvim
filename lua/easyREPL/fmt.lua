@@ -39,6 +39,17 @@ function Fmt:nonewline()
 	return Fmt:new(table.concat(lines, "\n"))
 end
 
+---Replace tabs with spaces
+---@param nr_sp number
+---@return Fmt
+function Fmt:notab(nr_sp)
+	local lines = table.concat(self.lines, "\n")
+	local tab_replacement = string.rep(" ", nr_sp)
+	lines = string.gsub(lines, "\t", tab_replacement)[0]
+
+	return Fmt:new(table.concat(lines, "\n"))
+end
+
 ---Return stringified content
 ---@param nr_cr number|nil
 ---@return string

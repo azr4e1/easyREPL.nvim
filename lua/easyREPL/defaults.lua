@@ -16,6 +16,7 @@ M.repl_defaults = {
 	nr_cr = 1,
 	strip = false,
 	nonewline = true,
+	notab = true,
 	filetypes = {},
 }
 
