@@ -43,9 +43,11 @@ end
 ---@param nr_sp number
 ---@return Fmt
 function Fmt:notab(nr_sp)
-	local lines = table.concat(self.lines, "\n")
+	local lines = {}
 	local tab_replacement = string.rep(" ", nr_sp)
-	lines = string.gsub(lines, "\t", tab_replacement)[0]
+	for _, line in ipairs(self.lines) do
+		table.insert(lines, string.gsub(line, "\t", tab_replacement)[0])
+	end
 
 	return Fmt:new(table.concat(lines, "\n"))
 end
