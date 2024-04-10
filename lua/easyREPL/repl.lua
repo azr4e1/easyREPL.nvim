@@ -245,22 +245,27 @@ function Terminal:to_vertical()
 end
 
 ---Resize terminal window
----@param opts string|table<number>
+---@param opts string|number|table<number>
 function Terminal:resize(opts)
-	if type(opts) == "string" then
+	if type(opts) == "string" or type(opts) == "number" then
 		self.height = -1
 		self.width = -1
 		self.screen_pct = opts
-		return
-	end
-	local height = opts.height
-	local width = opts.width
+	else
+		local height = opts.height
+		local width = opts.width
 
-	if height ~= nil and type(height) == "number" and height > 0 then
-		self.height = math.floor(height)
+		if height ~= nil and type(height) == "number" and height > 0 then
+			self.height = math.floor(height)
+		end
+		if width ~= nil and type(width) == "number" and width > 0 then
+			self.width = math.floor(width)
+		end
 	end
-	if width ~= nil and type(width) == "number" and width > 0 then
-		self.width = math.floor(width)
+	local winid = vim.fn.bufwinid(self.bufid)
+	if winid > 0 then
+		self:hide()
+		self:show()
 	end
 end
 
