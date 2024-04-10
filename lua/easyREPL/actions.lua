@@ -2,7 +2,7 @@ local u = require("utils")
 
 local M = {}
 
-function M.select_active_repl(func)
+local function select_active_repl(func)
 	local repls = {}
 	for i, term in ipairs(EasyreplTerminalList.terminals) do
 		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
@@ -11,7 +11,7 @@ function M.select_active_repl(func)
 	u.select(repls, "Select the REPL:", func)
 end
 
-function M.select_config_repl(func)
+local function select_config_repl(func)
 	local repls = {}
 	local i = 1
 	for name, repl in pairs(EasyreplConfiguration.repls) do
@@ -55,7 +55,7 @@ function M.add_new_select_repl()
 		table.insert(default_repls, name)
 	end
 
-	M.select_config_repl(function(id)
+	select_config_repl(function(id)
 		local name = default_repls[id]
 		M.add_new_repl(name)
 	end)
@@ -92,7 +92,7 @@ function M.restart_repl(id)
 end
 
 function M.restart_select_repl()
-	M.select_active_repl(M.restart_repl)
+	select_active_repl(M.restart_repl)
 end
 
 function M.restart_all()
@@ -110,7 +110,7 @@ function M.kill_repl(id)
 end
 
 function M.kill_select_repl()
-	M.select_active_repl(M.kill_repl)
+	select_active_repl(M.kill_repl)
 end
 
 function M.kill_all()
@@ -130,7 +130,7 @@ function M.rename_repl(id, new_name)
 end
 
 function M.rename_select_repl(new_name)
-	M.select_active_repl(function(id)
+	select_active_repl(function(id)
 		M.rename_repl(id, new_name)
 	end)
 end
@@ -156,7 +156,7 @@ function M.send_line_to_repl(id)
 end
 
 function M.send_line_to_select_repl()
-	M.select_active_repl(M.send_line_to_repl)
+	select_active_repl(M.send_line_to_repl)
 end
 
 function M.send_line_to_all()
@@ -196,7 +196,7 @@ function M.send_selection_to_repl(id)
 end
 
 function M.send_selection_to_select_repl()
-	M.select_active_repl(M.send_selection_to_repl)
+	select_active_repl(M.send_selection_to_repl)
 end
 
 function M.send_selection_to_all()
@@ -226,7 +226,7 @@ function M.show_repl(id)
 end
 
 function M.show_select_repl()
-	M.select_active_repl(M.show_repl)
+	select_active_repl(M.show_repl)
 end
 
 function M.show_all()
@@ -246,7 +246,7 @@ function M.hide_repl(id)
 end
 
 function M.hide_select_repl()
-	M.select_active_repl(M.hide_repl)
+	select_active_repl(M.hide_repl)
 end
 
 function M.hide_all()
@@ -266,7 +266,7 @@ function M.toggle_repl(id)
 end
 
 function M.toggle_selected_repl()
-	M.select_active_repl(M.toggle_repl)
+	select_active_repl(M.toggle_repl)
 end
 
 function M.toggle_all()
@@ -286,7 +286,7 @@ function M.to_float(id)
 end
 
 function M.to_float_select()
-	M.select_active_repl(M.to_float)
+	select_active_repl(M.to_float)
 end
 
 function M.to_horizontal(id)
@@ -300,7 +300,7 @@ function M.to_horizontal(id)
 end
 
 function M.to_horizontal_select()
-	M.select_active_repl(M.to_horizontal)
+	select_active_repl(M.to_horizontal)
 end
 
 function M.to_vertical(id)
@@ -314,7 +314,7 @@ function M.to_vertical(id)
 end
 
 function M.to_vertical_select()
-	M.select_active_repl(M.to_vertical)
+	select_active_repl(M.to_vertical)
 end
 
 function M.clear_repl(id)
@@ -328,7 +328,7 @@ function M.clear_repl(id)
 end
 
 function M.clear_select_repl()
-	M.select_active_repl(M.clear_repl)
+	select_active_repl(M.clear_repl)
 end
 
 function M.clear_all()
@@ -348,7 +348,7 @@ function M.interrupt_repl(id)
 end
 
 function M.interrupt_select_repl()
-	M.select_active_repl(M.interrupt_repl)
+	select_active_repl(M.interrupt_repl)
 end
 
 function M.interrupt_all()
