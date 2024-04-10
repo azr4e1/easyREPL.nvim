@@ -1,5 +1,3 @@
-local u = require("utils")
-
 local M = {}
 
 M.repl_defaults = {

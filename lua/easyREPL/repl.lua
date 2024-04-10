@@ -1,7 +1,7 @@
 --  TODO: every action must check that the terminal job is still active
-local fmt = require("fmt")
-local u = require("utils")
-local defaults = require("defaults")
+local fmt = require("easyREPL.fmt")
+local u = require("easyREPL.utils")
+local defaults = require("easyREPL.defaults")
 
 local M = {}
 

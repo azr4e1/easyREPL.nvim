@@ -1,7 +1,7 @@
 -- TODO: allow for terminal configuration per REPL
-local defaults = require("defaults")
-local repl = require("repl")
-local u = require("utils")
+local defaults = require("easyREPL.defaults")
+local repl = require("easyREPL.repl")
+local u = require("easyREPL.utils")
 
 local M = {}
 
