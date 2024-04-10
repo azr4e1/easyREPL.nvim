@@ -2,15 +2,17 @@ local c = require("easyREPL.config")
 local core = require("easyREPL.core")
 local commands = require("easyREPL.commands")
 local defaults = require("easyREPL.defaults")
-local u = require("easyREPL.utils")
 
 local function setup(opts)
-	local repls = u.copy(defaults.default_repls)
+	local repls = {}
+	for _, repl in ipairs(defaults.default_repls) do
+		if vim.fn.executable(repl.cmd) == 1 then
+			table.insert(repls, repl)
+		end
+	end
 	if opts.repls ~= nil and type(opts.repls) == "table" then
 		for _, repl in ipairs(opts.repls) do
-			if vim.fn.executable(repl.cmd) == 1 then
-				table.insert(repls, repl)
-			end
+			table.insert(repls, repl)
 		end
 	end
 	opts.repls = repls
