@@ -335,7 +335,7 @@ function M.toggle_repl(id)
 	end)
 end
 
-function M.toggle_selected_repl()
+function M.toggle_select_repl()
 	select_active_repl(M.toggle_repl)
 end
 
