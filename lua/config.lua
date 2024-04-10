@@ -37,24 +37,21 @@ end
 ---@param name string
 ---@return Repl
 function Config:new_repl(name)
-	local new_repl = self.repls[name]
-	if new_repl == nil then
-		local params = self.default_repl
+	local params = u.copy(self.repls[name])
+
+	if params == nil then
+		params = u.copy(self.default_repl)
 		params.cmd = name
-		new_repl = repl.Repl:new(params)
 	end
 
-	return new_repl
+	return repl.Repl:new(params)
 end
 
 function Config:new_term(name)
-	local new_repl = self:new_repl(name)
-	local params = self.default_term
-	params.repl = new_repl
+	local params = u.copy(self.default_term)
+	params.repl = self:new_repl(name)
 
-	local new_term = repl.Terminal:new(params)
-
-	return new_term
+	return repl.Terminal:new(params)
 end
 
 M.Config = Config
