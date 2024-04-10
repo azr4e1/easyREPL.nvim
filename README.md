@@ -9,4 +9,5 @@
 - [x] strip empty lines from text to send (optional)
 - [x] Default/configurable repls
 - [x] minimal configuration
+- [ ] commands
 - [ ] Lazy load
