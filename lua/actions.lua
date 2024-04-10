@@ -1,4 +1,26 @@
+local u = require("utils")
+
 local M = {}
+
+function M.select_active_repl(func)
+	local repls = {}
+	for i, term in ipairs(EasyreplTerminalList.terminals) do
+		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
+		table.insert(repls, selection)
+	end
+	u.select(repls, "Select the REPL:", func)
+end
+
+function M.select_config_repl(func)
+	local repls = {}
+	local i = 1
+	for name, repl in pairs(EasyreplConfiguration.repls) do
+		local selection = tostring(i) .. ". " .. name .. " - " .. repl.cmd
+		table.insert(repls, selection)
+		i = i + 1
+	end
+	u.select(repls, "Select the REPL:", func)
+end
 
 function M.add_new_repl(name)
 	local ok, new_term = pcall(function()
@@ -27,48 +49,127 @@ function M.add_new_repl(name)
 	end
 end
 
-function M.select_repl(func)
-	local repls = {}
-	for i, term in ipairs(EasyreplTerminalList.terminals) do
-		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
-		table.insert(repls, selection)
+function M.add_new_select_repl()
+	local default_repls = {}
+	for name, _ in pairs(EasyreplConfiguration.repls) do
+		table.insert(default_repls, name)
 	end
 
-	local catcher_thread = coroutine.create(function(index)
-		local co = coroutine.running()
-		vim.ui.select(repls, { prompt = "Select the REPL:" }, function(_, idx)
-			coroutine.resume(co, idx)
-		end)
-		local input = coroutine.yield()
-		func(input)
+	M.select_config_repl(function(id)
+		local name = default_repls[id]
+		M.add_new_repl(name)
 	end)
-
-	coroutine.resume(catcher_thread)
 end
 
-function M.restart_repl(id) end
+function M.restart_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:restart()
+	end)
+end
 
-function M.restart_select_repl() end
+function M.restart_select_repl()
+	M.select_active_repl(M.restart_repl)
+end
 
-function M.restart_all() end
+function M.restart_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:restart()
+	end)
+end
 
-function M.kill_repl(...) end
+function M.kill_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:remove(id)
+end
+
+function M.kill_select_repl()
+	M.select_active_repl(M.kill_repl)
+end
 
 function M.kill_all()
 	EasyreplTerminalList:broadcast(function(term)
 		term:kill()
 	end)
+	EasyreplTerminalList.terminals = {}
 end
 
-function M.rename_repl(id, new_name) end
+function M.rename_repl(id, new_name)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList.terminals[id].repl.name = new_name
+end
 
-function M.send_to_repl(...) end
+function M.rename_select_repl(new_name)
+	M.select_active_repl(function(id)
+		M.rename_repl(id, new_name)
+	end)
+end
 
-function M.send_to_all() end
+function M.send_line_to_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		local line = u.get_current_line()
+		local ok = pcall(function()
+			term:send(line)
+		end)
+		if not ok then
+			vim.notify(
+				"There was an error sending text to REPL. Make sure the process is running.",
+				vim.log.levels.ERROR
+			)
+			return
+		end
+	end)
+end
+
+function M.send_line_to_select_repl()
+	M.select_active_repl(M.send_line_to_repl)
+end
+
+function M.send_line_to_all() end
+
+function M.send_selection_to_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		local line = u.get_current_selection()
+		local ok = pcall(function()
+			term:send(line)
+		end)
+		if not ok then
+			vim.notify(
+				"There was an error sending text to REPL. Make sure the process is running.",
+				vim.log.levels.ERROR
+			)
+			return
+		end
+	end)
+end
+
+function M.send_selection_to_select_repl()
+	M.select_active_repl(M.send_selection_to_repl)
+end
+
+function M.send_selection_to_all() end
 
 function M.show_repl(id)
 	if EasyreplTerminalList.terminals[id] == nil then
 		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
 	end
 	EasyreplTerminalList:apply(id, function(term)
 		term:show()
@@ -76,14 +177,19 @@ function M.show_repl(id)
 end
 
 function M.show_select_repl()
-	M.select_repl(M.show_repl)
+	M.select_active_repl(M.show_repl)
 end
 
-function M.show_all() end
+function M.show_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:show()
+	end)
+end
 
 function M.hide_repl(id)
 	if EasyreplTerminalList.terminals[id] == nil then
 		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
 	end
 	EasyreplTerminalList:apply(id, function(term)
 		term:hide()
@@ -91,27 +197,122 @@ function M.hide_repl(id)
 end
 
 function M.hide_select_repl()
-	M.select_repl(M.hide_repl)
+	M.select_active_repl(M.hide_repl)
 end
 
-function M.hide_all() end
+function M.hide_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:hide()
+	end)
+end
 
-function M.toggle_repl(...) end
+function M.toggle_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:toggle()
+	end)
+end
 
-function M.toggle_all() end
+function M.toggle_selected_repl()
+	M.select_active_repl(M.toggle_repl)
+end
 
-function M.to_float(...) end
+function M.toggle_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:toggle()
+	end)
+end
 
-function M.to_horizontal(...) end
+function M.to_float(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:to_float()
+	end)
+end
 
-function M.to_vertical(...) end
+function M.to_float_select()
+	M.select_active_repl(M.to_float)
+end
 
-function M.clear_repl(...) end
+function M.to_horizontal(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:to_horizontal()
+	end)
+end
 
-function M.clear_all() end
+function M.to_horizontal_select()
+	M.select_active_repl(M.to_horizontal)
+end
 
-function M.interrupt_repl(...) end
+function M.to_vertical(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:to_vertical()
+	end)
+end
 
-function M.interrupt_all() end
+function M.to_vertical_select()
+	M.select_active_repl(M.to_vertical)
+end
+
+function M.clear_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:clear()
+	end)
+end
+
+function M.clear_select_repl()
+	M.select_active_repl(M.clear_repl)
+end
+
+function M.clear_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:clear()
+	end)
+end
+
+function M.interrupt_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+		return
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:interrupt()
+	end)
+end
+
+function M.interrupt_select_repl()
+	M.select_active_repl(M.interrupt_repl)
+end
+
+function M.interrupt_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:interrupt()
+	end)
+end
+
+function M.list_repls()
+	for i, term in ipairs(EasyreplTerminalList.terminals) do
+		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
+		print(selection)
+	end
+end
 
 return M

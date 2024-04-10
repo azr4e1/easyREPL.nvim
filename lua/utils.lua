@@ -116,6 +116,17 @@ function M.copy(input)
 	return copy
 end
 
-function M.select_repl() end
+function M.select(options, prompt, func)
+	local catcher_thread = coroutine.create(function(index)
+		local co = coroutine.running()
+		vim.ui.select(options, { prompt = prompt }, function(_, idx)
+			coroutine.resume(co, idx)
+		end)
+		local input = coroutine.yield()
+		func(input)
+	end)
+
+	coroutine.resume(catcher_thread)
+end
 
 return M
