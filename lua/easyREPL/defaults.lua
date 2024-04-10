@@ -33,4 +33,6 @@ M.term_types = {
 	floating = "boolean",
 }
 
+M.default_repls = {}
+
 return M
