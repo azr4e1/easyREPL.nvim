@@ -20,10 +20,11 @@ local function setup(opts)
 	EasyreplConfiguration = c.Config:new(opts)
 	EasyreplTerminalList = core.Manager:new()
 	commands.setup_commands()
+	defaults.set_term_background(opts.background)
 end
 
 local M = {
-	actions = require("actions"),
+	actions = require("easyREPL.actions"),
 	setup = setup,
 }
 
