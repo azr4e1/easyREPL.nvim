@@ -1,23 +1,30 @@
----@type Manager
-local manager = vim.g.easyrepl_terminal_list
-
----@type Config
-local config = vim.g.easyrepl_configuration
-
--- local c = require("config")
-
 local M = {}
 
 function M.add_new_repl(name)
-	local ok, new_term = pcall(config.new_term, config, name)
+	local ok, new_term = pcall(function()
+		return EasyreplConfiguration:new_term(name)
+	end)
 	if not ok then
 		vim.notify(
-			"There was an error. Make sure you provide the correct REPL and that there is no error in the configuration",
-			vim.log.levels.ERROR,
-			{}
+			"There was an error creating the REPL "
+				.. name
+				.. ". Make sure to provide the correct REPL and that there is no error in your configuration",
+			vim.log.levels.ERROR
 		)
+		return
 	end
-	manager:add(new_term)
+	ok = pcall(function()
+		EasyreplTerminalList:add(new_term)
+	end)
+	if not ok then
+		vim.notify(
+			"There was an error starting the REPL "
+				.. name
+				.. ". Make sure to provide the correct REPL and that there is no error in your configuration",
+			vim.log.levels.ERROR
+		)
+		return
+	end
 end
 
 function M.restart_repl(...) end
