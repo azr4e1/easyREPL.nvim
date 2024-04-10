@@ -1,5 +1,15 @@
 local M = {}
 
+M.window_settings = {
+	number = false,
+	relativenumber = false,
+	cursorline = false,
+	cursorcolumn = false,
+	spell = false,
+	list = false,
+	signcolumn = "no",
+}
+
 M.repl_defaults = {
 	name = "REPL",
 	cwd = ".",
@@ -22,6 +32,8 @@ M.term_defaults = {
 	screen_pct = "50%",
 	horizontal = false,
 	floating = false,
+	height = -1,
+	width = -1,
 }
 
 M.term_types = {
@@ -96,5 +108,12 @@ M.default_repls = {
 		filetypes = { "julia" },
 	},
 }
+
+function M.set_term_background(bg)
+	if bg == nil then
+		bg = "#000000"
+	end
+	vim.api.nvim_set_hl(0, "EasyReplBackground", { bg = bg })
+end
 
 return M
