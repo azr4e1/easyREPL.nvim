@@ -5,6 +5,7 @@ local defaults = require("easyREPL.defaults")
 
 local M = {}
 
+-- TODO: this doesn't work, to fix
 local C_L = string.char(12)
 local C_C = string.char(03)
 
