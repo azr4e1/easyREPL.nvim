@@ -54,6 +54,15 @@ function M.add_new_repl(name)
 	end
 end
 
+function M.add_new_repl_and_show(name)
+	local prev_len = #EasyreplTerminalList.terminals
+	M.add_new_repl(name)
+	local new_len = #EasyreplTerminalList.terminals
+	if new_len - prev_len == 1 then
+		(EasyreplTerminalList.terminals[new_len]):show()
+	end
+end
+
 function M.add_new_select_repl()
 	local default_repls = {}
 	for name, _ in pairs(EasyreplConfiguration.repls) do
@@ -63,6 +72,18 @@ function M.add_new_select_repl()
 	select_config_repl(function(id)
 		local name = default_repls[id]
 		M.add_new_repl(name)
+	end)
+end
+
+function M.add_new_select_and_show()
+	local default_repls = {}
+	for name, _ in pairs(EasyreplConfiguration.repls) do
+		table.insert(default_repls, name)
+	end
+
+	select_config_repl(function(id)
+		local name = default_repls[id]
+		M.add_new_repl_and_show(name)
 	end)
 end
 
@@ -84,6 +105,26 @@ function M.add_new_repl_auto()
 		return
 	end
 	M.add_new_repl(auto_repl_name)
+end
+
+function M.add_new_repl_auto_and_show()
+	local auto_repl_name = nil
+	local filetype = vim.o.filetype
+	for name, repl in pairs(EasyreplConfiguration.repls) do
+		for _, ft in ipairs(repl.repl_config.filetypes) do
+			if filetype == ft then
+				auto_repl_name = name
+				goto continue
+			end
+		end
+	end
+	::continue::
+
+	if auto_repl_name == nil then
+		M.add_new_select_and_show()
+		return
+	end
+	M.add_new_repl_and_show(auto_repl_name)
 end
 
 function M.restart_repl(id)
