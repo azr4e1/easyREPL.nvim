@@ -61,7 +61,7 @@ function M.add_new_select_repl()
 	end)
 end
 
-function M.add_new_repo_auto()
+function M.add_new_repl_auto()
 	local auto_repl_name = nil
 	local filetype = vim.o.filetype
 	for name, repl in pairs(EasyreplConfiguration.repls) do
