@@ -1,7 +1,7 @@
 local M = {}
 
 ---@class Manager
----@field terminals table
+---@field terminals table<Terminal>
 local Manager = {}
 
 function Manager:new()
@@ -13,6 +13,7 @@ end
 ---Add terminal object
 ---@param term Terminal
 function Manager:add(term)
+	term:spawn()
 	table.insert(self.terminals, term)
 end
 
@@ -23,6 +24,7 @@ function Manager:remove(id)
 	if term == nil then
 		error("terminal doesn't exist")
 	end
+	term:kill()
 	_ = table.remove(self.terminals, id)
 end
 
@@ -44,10 +46,6 @@ function Manager:broadcast(func)
 		self:apply(id, func)
 	end
 end
-
----Setup function
----@param config table
-function M.setup(config) end
 
 M.Manager = Manager
 

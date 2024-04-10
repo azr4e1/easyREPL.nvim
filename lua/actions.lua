@@ -46,25 +46,53 @@ function M.select_repl(func)
 	coroutine.resume(catcher_thread)
 end
 
+function M.restart_repl(id) end
+
+function M.restart_select_repl() end
+
 function M.restart_all() end
 
 function M.kill_repl(...) end
 
-function M.kill_all() end
+function M.kill_all()
+	EasyreplTerminalList:broadcast(function(term)
+		term:kill()
+	end)
+end
 
 function M.rename_repl(id, new_name) end
-
-function M.select_repl() end
 
 function M.send_to_repl(...) end
 
 function M.send_to_all() end
 
-function M.show_repl(...) end
+function M.show_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:show()
+	end)
+end
+
+function M.show_select_repl()
+	M.select_repl(M.show_repl)
+end
 
 function M.show_all() end
 
-function M.hide_repl(...) end
+function M.hide_repl(id)
+	if EasyreplTerminalList.terminals[id] == nil then
+		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
+	end
+	EasyreplTerminalList:apply(id, function(term)
+		term:hide()
+	end)
+end
+
+function M.hide_select_repl()
+	M.select_repl(M.hide_repl)
+end
 
 function M.hide_all() end
 
