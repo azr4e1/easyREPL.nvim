@@ -23,9 +23,16 @@ function Config:new(opts)
 	local repls = {}
 	if type(opts["repls"]) == "table" then
 		for _, repl_conf in ipairs(opts["repls"]) do
-			local current_repl = repl.Repl:new(repl_conf)
+			local ok, current_repl = pcall(function()
+				return repl.Repl:new(repl_conf)
+			end)
+			if not ok then
+				vim.notify("command " .. repl_conf.cmd .. " does not exist.", vim.log.levels.ERROR)
+				goto continue
+			end
 			local current_term_conf = u.get_defaults(repl_conf, obj.default_term)
 			repls[current_repl.name] = { repl_config = current_repl, term_config = current_term_conf }
+		    ::continue::
 		end
 	end
 
