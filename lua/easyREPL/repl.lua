@@ -5,8 +5,8 @@ local defaults = require("easyREPL.defaults")
 
 local M = {}
 
-local C_L = ""
-local C_C = ""
+local C_L = string.char(12)
+local C_C = string.char(03)
 
 local function set_window_options(winid)
 	for key, val in pairs(defaults.window_settings) do
