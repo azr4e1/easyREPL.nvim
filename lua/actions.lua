@@ -27,7 +27,24 @@ function M.add_new_repl(name)
 	end
 end
 
-function M.restart_repl(...) end
+function M.select_repl(func)
+	local repls = {}
+	for i, term in ipairs(EasyreplTerminalList.terminals) do
+		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
+		table.insert(repls, selection)
+	end
+
+	local catcher_thread = coroutine.create(function(index)
+		local co = coroutine.running()
+		vim.ui.select(repls, { prompt = "Select the REPL:" }, function(_, idx)
+			coroutine.resume(co, idx)
+		end)
+		local input = coroutine.yield()
+		func(input)
+	end)
+
+	coroutine.resume(catcher_thread)
+end
 
 function M.restart_all() end
 
