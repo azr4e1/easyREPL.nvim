@@ -61,6 +61,26 @@ function M.add_new_select_repl()
 	end)
 end
 
+function M.add_new_repo_auto()
+	local auto_repl_name = nil
+	local filetype = vim.o.filetype
+	for name, repl in pairs(EasyreplConfiguration.repls) do
+		for _, ft in ipairs(repl.filetypes) do
+			if filetype == ft then
+				auto_repl_name = name
+				goto continue
+			end
+		end
+	end
+	::continue::
+
+	if auto_repl_name == nil then
+		M.add_new_select_repl()
+		return
+	end
+	M.add_new_repl(auto_repl_name)
+end
+
 function M.restart_repl(id)
 	if EasyreplTerminalList.terminals[id] == nil then
 		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
@@ -105,6 +125,7 @@ function M.rename_repl(id, new_name)
 		vim.notify("REPL doesn't exist", vim.log.levels.WARN)
 		return
 	end
+	---@diagnostic disable-next-line: undefined-field
 	EasyreplTerminalList.terminals[id].repl.name = new_name
 end
 

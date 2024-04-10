@@ -1,4 +1,5 @@
 --  TODO: every action must check that the terminal job is still active
+-- TODO: add screen percentage size for terminal, to display it dynamically
 local fmt = require("fmt")
 local u = require("utils")
 local defaults = require("defaults")
@@ -15,6 +16,7 @@ local C_C = ""
 ---@field nr_cr number
 ---@field strip boolean
 ---@field nonewline boolean
+---@field filetypes table<string>
 local Repl = {}
 
 ---Class constructor

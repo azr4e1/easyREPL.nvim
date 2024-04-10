@@ -8,6 +8,7 @@ M.repl_defaults = {
 	nr_cr = 1,
 	strip = false,
 	nonewline = true,
+	filetypes = {},
 }
 
 M.repl_types = {
@@ -16,6 +17,7 @@ M.repl_types = {
 	nr_cr = "number",
 	strip = "boolean",
 	nonewline = "boolean",
+	filetypes = "table",
 }
 
 local height, width = u.get_term_size_pct(0.5)
