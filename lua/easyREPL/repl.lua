@@ -8,6 +8,13 @@ local M = {}
 local C_L = ""
 local C_C = ""
 
+local function set_window_options(winid)
+	for key, val in pairs(defaults.window_settings) do
+		vim.api.nvim_win_set_option(winid, key, val)
+	end
+	vim.api.nvim_win_set_option(winid, "winhighlight", "Normal:EasyReplBackground")
+end
+
 ---@class Repl
 ---@field cmd string
 ---@field name string
