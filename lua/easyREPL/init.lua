@@ -1,8 +1,8 @@
-local c = require("config")
-local core = require("core")
-local commands = require("commands")
-local defaults = require("defaults")
-local u = require("utils")
+local c = require("easyREPL.config")
+local core = require("easyREPL.core")
+local commands = require("easyREPL.commands")
+local defaults = require("easyREPL.defaults")
+local u = require("easyREPL.utils")
 
 local function setup(opts)
 	local repls = u.copy(defaults.default_repls)
