@@ -30,19 +30,24 @@ function M.add_new_repl(name)
 		vim.notify(
 			"There was an error creating the REPL "
 				.. name
-				.. ". Make sure to provide the correct REPL and that there is no error in your configuration",
+				.. ":\n"
+				.. new_term
+				.. "\nMake sure to provide the correct REPL and that there is no error in your configuration",
 			vim.log.levels.ERROR
 		)
 		return
 	end
-	ok = pcall(function()
+	local err
+	ok, err = pcall(function()
 		EasyreplTerminalList:add(new_term)
 	end)
 	if not ok then
 		vim.notify(
 			"There was an error starting the REPL "
 				.. name
-				.. ". Make sure to provide the correct REPL and that there is no error in your configuration",
+				.. ":\n"
+				.. err
+				.. ".\nMake sure to provide the correct REPL and that there is no error in your configuration",
 			vim.log.levels.ERROR
 		)
 		return
@@ -142,12 +147,12 @@ function M.send_line_to_repl(id)
 	end
 	EasyreplTerminalList:apply(id, function(term)
 		local line = u.get_current_line()
-		local ok = pcall(function()
+		local ok, err = pcall(function()
 			term:send(line)
 		end)
 		if not ok then
 			vim.notify(
-				"There was an error sending text to REPL. Make sure the process is running.",
+				"There was an error sending text to REPL:\n" .. err .. "\nMake sure the process is running.",
 				vim.log.levels.ERROR
 			)
 			return
@@ -162,12 +167,12 @@ end
 function M.send_line_to_all()
 	EasyreplTerminalList:broadcast(function(term)
 		local line = u.get_current_line()
-		local ok = pcall(function()
+		local ok, err = pcall(function()
 			term:send(line)
 		end)
 		if not ok then
 			vim.notify(
-				"There was an error sending text to REPL. Make sure the process is running.",
+				"There was an error sending text to REPL:\n" .. err .. "\nMake sure the process is running.",
 				vim.log.levels.ERROR
 			)
 			return
@@ -182,12 +187,12 @@ function M.send_selection_to_repl(id)
 	end
 	EasyreplTerminalList:apply(id, function(term)
 		local line = u.get_current_selection()
-		local ok = pcall(function()
+		local ok, err = pcall(function()
 			term:send(line)
 		end)
 		if not ok then
 			vim.notify(
-				"There was an error sending text to REPL. Make sure the process is running.",
+				"There was an error sending text to REPL:\n" .. err .. "\nMake sure the process is running.",
 				vim.log.levels.ERROR
 			)
 			return
@@ -202,12 +207,12 @@ end
 function M.send_selection_to_all()
 	EasyreplTerminalList:broadcast(function(term)
 		local line = u.get_current_selection()
-		local ok = pcall(function()
+		local ok, err = pcall(function()
 			term:send(line)
 		end)
 		if not ok then
 			vim.notify(
-				"There was an error sending text to REPL. Make sure the process is running.",
+				"There was an error sending text to REPL:\n" .. err .. "\nMake sure the process is running.",
 				vim.log.levels.ERROR
 			)
 			return
@@ -221,7 +226,13 @@ function M.show_repl(id)
 		return
 	end
 	EasyreplTerminalList:apply(id, function(term)
-		term:show()
+		local ok, err = pcall(function()
+			term:show()
+		end)
+		if not ok then
+			vim.notify(err, vim.log.levels.ERROR)
+			return
+		end
 	end)
 end
 
@@ -231,7 +242,13 @@ end
 
 function M.show_all()
 	EasyreplTerminalList:broadcast(function(term)
-		term:show()
+		local ok, err = pcall(function()
+			term:show()
+		end)
+		if not ok then
+			vim.notify(err, vim.log.levels.ERROR)
+			return
+		end
 	end)
 end
 
@@ -261,7 +278,13 @@ function M.toggle_repl(id)
 		return
 	end
 	EasyreplTerminalList:apply(id, function(term)
-		term:toggle()
+		local ok, err = pcall(function()
+			term:toggle()
+		end)
+		if not ok then
+			vim.notify(err, vim.log.levels.ERROR)
+			return
+		end
 	end)
 end
 
@@ -271,7 +294,13 @@ end
 
 function M.toggle_all()
 	EasyreplTerminalList:broadcast(function(term)
-		term:toggle()
+		local ok, err = pcall(function()
+			term:toggle()
+		end)
+		if not ok then
+			vim.notify(err, vim.log.levels.ERROR)
+			return
+		end
 	end)
 end
 
