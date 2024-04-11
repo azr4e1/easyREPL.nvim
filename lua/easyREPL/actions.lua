@@ -13,13 +13,10 @@ end
 
 local function select_config_repl(func)
 	local repls = {}
-	local i = 1
 	for name, repl in pairs(EasyreplConfiguration.repls) do
 		local selection = name .. " - " .. repl.repl_config.cmd
 		table.insert(repls, selection)
-		i = i + 1
 	end
-	table.sort(repls)
 	u.select(repls, "Select the REPL:", func)
 end
 
