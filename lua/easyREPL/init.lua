@@ -6,7 +6,7 @@ local defaults = require("easyREPL.defaults")
 local function setup(opts)
 	local repls = {}
 	for _, repl in ipairs(defaults.default_repls) do
-		local base_cmd = vim.split(repl.cmd, " ")[0]
+		local base_cmd = vim.split(repl.cmd, " ")[1]
 		if vim.fn.executable(base_cmd) == 1 then
 			table.insert(repls, repl)
 		end

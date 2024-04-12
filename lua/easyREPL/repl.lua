@@ -34,7 +34,7 @@ function Repl:new(opts)
 	if opts.cmd == nil then
 		error("'cmd' value cannot be nil or empty. It must be a valid REPL command.")
 	end
-	local base_cmd = vim.split(opts.cmd, " ")[0]
+	local base_cmd = vim.split(opts.cmd, " ")[1]
 	if vim.fn.executable(base_cmd) ~= 1 then
 		error(opts.cmd .. " does not exist.")
 	end
