@@ -30,6 +30,11 @@ local function select_config_repl(func)
 end
 
 function M.add_new_repl(name)
+	if name == nil then
+		vim.notify("REPL name is required", vim.log.levels.WARN)
+		return
+	end
+
 	local ok, new_term = pcall(function()
 		return EasyreplConfiguration:new_term(name)
 	end)
