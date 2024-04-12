@@ -46,8 +46,8 @@ M.term_types = {
 
 M.default_repls = {
 	{
-		cmd = "python",
-		name = "python interpreter",
+		cmd = "ipython --no-autoindent",
+		name = "ipython REPL",
 		cwd = ".",
 		nr_cr = 2,
 		strip = false,
@@ -55,13 +55,13 @@ M.default_repls = {
 		filetypes = { "python" },
 	},
 	{
-		cmd = "ipython --no-autoindent",
-		name = "ipython REPL",
+		cmd = "python",
+		name = "python interpreter",
 		cwd = ".",
 		nr_cr = 2,
 		strip = false,
 		nonewline = true,
-		filetypes = {},
+		filetypes = { "python" },
 	},
 	{
 		cmd = "lua",
