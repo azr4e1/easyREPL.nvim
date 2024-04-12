@@ -503,7 +503,7 @@ end
 
 function M.list_repls()
 	for i, term in ipairs(EasyreplTerminalList.terminals) do
-		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
+		local selection = tostring(i) .. ". " .. term.repl.name .. " (" .. term.repl.cmd .. ")"
 		print(selection)
 	end
 end
