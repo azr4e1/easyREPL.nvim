@@ -11,13 +11,22 @@ local function select_active_repl(func)
 	u.select(repls, "Select the REPL:", func)
 end
 
-local function select_config_repl(func)
+local function build_select_config_repl_msg()
 	local repls = {}
+	local selections = {}
 	for name, repl in pairs(EasyreplConfiguration.repls) do
 		local selection = name .. " (" .. repl.repl_config.cmd .. ")"
-		table.insert(repls, selection)
+		repls[selection] = name
+		table.insert(selections, selection)
 	end
-	u.select(repls, "Select the REPL:", func)
+	table.sort(selections)
+
+	return repls, selections
+end
+
+local function select_config_repl(func)
+	local _, selections = build_select_config_repl_msg()
+	u.select(selections, "Select the REPL:", func)
 end
 
 function M.add_new_repl(name)
@@ -62,25 +71,17 @@ function M.add_new_repl_and_show(name)
 end
 
 function M.add_new_select_repl()
-	local default_repls = {}
-	for name, _ in pairs(EasyreplConfiguration.repls) do
-		table.insert(default_repls, name)
-	end
-
 	select_config_repl(function(id)
-		local name = default_repls[id]
+		local repls_map, selections = build_select_config_repl_msg()
+		local name = repls_map[selections[id]]
 		M.add_new_repl(name)
 	end)
 end
 
 function M.add_new_select_and_show()
-	local default_repls = {}
-	for name, _ in pairs(EasyreplConfiguration.repls) do
-		table.insert(default_repls, name)
-	end
-
 	select_config_repl(function(id)
-		local name = default_repls[id]
+		local repls_map, selections = build_select_config_repl_msg()
+		local name = repls_map[selections[id]]
 		M.add_new_repl_and_show(name)
 	end)
 end
