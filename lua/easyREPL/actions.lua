@@ -111,7 +111,7 @@ function M.add_new_repl_auto_and_show()
 	local current_filetypes = EasyreplConfiguration.filetypes[filetype]
 
 	if current_filetypes == nil or type(current_filetypes) ~= "table" or #current_filetypes < 1 then
-		M.add_new_select_repl()
+		M.add_new_select_and_show()
 		return
 	end
 
