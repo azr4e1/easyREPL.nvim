@@ -55,7 +55,7 @@ M.default_repls = {
 		filetypes = { "python" },
 	},
 	{
-		cmd = "ipython",
+		cmd = "ipython --no-autoindent",
 		name = "ipython REPL",
 		cwd = ".",
 		nr_cr = 2,
