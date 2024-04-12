@@ -1,4 +1,3 @@
--- TODO: implement priority filetypes
 local defaults = require("easyREPL.defaults")
 local repl = require("easyREPL.repl")
 local u = require("easyREPL.utils")
