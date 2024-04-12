@@ -5,7 +5,7 @@ local M = {}
 local function select_active_repl(func)
 	local repls = {}
 	for i, term in ipairs(EasyreplTerminalList.terminals) do
-		local selection = tostring(i) .. ". " .. term.repl.name .. " - " .. term.repl.cmd
+		local selection = tostring(i) .. ". " .. term.repl.name .. " (" .. term.repl.cmd .. ")"
 		table.insert(repls, selection)
 	end
 	u.select(repls, "Select the REPL:", func)
@@ -14,7 +14,7 @@ end
 local function select_config_repl(func)
 	local repls = {}
 	for name, repl in pairs(EasyreplConfiguration.repls) do
-		local selection = name .. " - " .. repl.repl_config.cmd
+		local selection = name .. " (" .. repl.repl_config.cmd .. ")"
 		table.insert(repls, selection)
 	end
 	u.select(repls, "Select the REPL:", func)
